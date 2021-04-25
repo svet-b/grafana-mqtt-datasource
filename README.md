@@ -1,49 +1,26 @@
-# Grafana Data Source Plugin Template
+# MQTT Streaming Data Source for Grafana
 
-[![Build](https://github.com/grafana/grafana-starter-datasource/workflows/CI/badge.svg)](https://github.com/grafana/grafana-starter-datasource/actions?query=workflow%3A%22CI%22)
+Inspired by the superb [Redis streaming data source](https://github.com/RedisGrafana/grafana-redis-datasource), I thought it would be cool to be able to visualize MQTT data in real-time. What's more, since MQTT is a native "streaming" protocol - with data being pushed to subscribers as soon as it's published - it made even more sense to pair an MQTT data source with Grafana's new streaming visualization capabilities.
 
-This template is a starting point for building Grafana Data Source Plugins
+So far the functionality leve is "proof-of-concept". The client can subscribe to a single topic over an unauthenticated WebSocket connection, and expects to receive numerical values published as strings on that topic.
 
-## What is Grafana Data Source Plugin?
+In fact shortly after creating this I came across https://github.com/diebietse/grafana-mqtt, which is pretty similar.
 
-Grafana supports a wide range of data sources, including Prometheus, MySQL, and even Datadog. There’s a good chance you can already visualize metrics from the systems you have set up. In some cases, though, you already have an in-house metrics solution that you’d like to add to your Grafana dashboards. Grafana Data Source Plugins enables integrating such solutions with Grafana.
+## To do
 
-## Getting started
+The near-term plan is to address the following issues:
 
-1. Install dependencies
+- When topic is changed, re-subscribe to new topic immediately. Currently the user needs to save and refresh the dashboard.
+- Enable parsing of other payload formats: JSON (via JSONata), CBOR, etc)
+- Enable authentication (though probably without a backend plugin component, at least for the time being)
 
-   ```bash
-   yarn install
-   ```
+Some other enhancements:
 
-2. Build plugin in development mode or run in watch mode
-
-   ```bash
-   yarn dev
-   ```
-
-   or
-
-   ```bash
-   yarn watch
-   ```
-
-3. Build plugin in production mode
-
-   ```bash
-   yarn build
-   ```
-
-## Learn more
-
-- [Build a data source plugin tutorial](https://grafana.com/tutorials/build-a-data-source-plugin)
-- [Grafana documentation](https://grafana.com/docs/)
-- [Grafana Tutorials](https://grafana.com/tutorials/) - Grafana Tutorials are step-by-step guides that help you make the most of Grafana
-- [Grafana UI Library](https://developers.grafana.com/ui) - UI components to help you build interfaces using Grafana Design System
-
-## To Do
-
-- When topic is changed, re-subscribe to new topic (currently the user needs to save and refresh the dashboard)
-- Move plotted values to the left (i.e. move time axis) even while no new data is being received.
-- Detect and report connection errors (e.g. at time of initial datasource setup). This is non-trivial due to https://github.com/mqttjs/MQTT.js/issues/876 and the fact that MqttClient.stream is not exposed in TypeScript
+- Move plotted values to the left (i.e. move time axis) even while no new data is being received
+- Enable a dedicated timestamp field (rather than assume time = now)
 - Support for multiple data series
+- Detect and report connection errors (e.g. at time of initial datasource setup). This is non-trivial due to https://github.com/mqttjs/MQTT.js/issues/876 and the fact that `MqttClient.stream` is not exposed in TypeScript
+
+## How to set up
+
+## Simple test

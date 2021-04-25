@@ -1,29 +1,29 @@
 {
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
   "type": "datasource",
-  "name": "mqtt-datasource",
+  "name": "MQTT Streaming",
   "id": "ammpio-mqtt-datasource",
   "metrics": true,
   "streaming": true,
   "info": {
-    "description": "MQTT Datasource",
+    "description": "MQTT streaming data source over WebSockets",
     "author": {
-      "name": "Svet Bajlekov",
+      "name": "Svet Bajlekov / AMMP Technologies",
       "url": "https://www.ammp.io/"
     },
-    "keywords": ["mqtt", "streaming"],
+    "keywords": ["mqtt", "telemetry", "streaming"],
     "logos": {
-      "small": "img/logo.svg",
-      "large": "img/logo.svg"
+      "small": "img/mqtt_logo.svg",
+      "large": "img/mqtt_logo.svg"
     },
     "links": [
       {
         "name": "Website",
-        "url": "https://github.com/grafana/grafana-starter-datasource"
+        "url": "https://github.com/svet-b/grafana-mqtt-datasource"
       },
       {
         "name": "License",
-        "url": "https://github.com/grafana/grafana-starter-datasource/blob/master/LICENSE"
+        "url": "https://github.com/svet-b/grafana-mqtt-datasource/blob/main/LICENSE"
       }
     ],
     "screenshots": [],

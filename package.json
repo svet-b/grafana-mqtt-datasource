@@ -1,6 +1,6 @@
 {
-  "name": "ammpio-mqtt-datasource",
-  "version": "1.0.0",
+  "name": "grafana-mqtt-streaming-datasource",
+  "version": "0.0.1",
   "description": "MQTT Datasource",
   "scripts": {
     "build": "grafana-toolkit plugin:build",
@@ -10,7 +10,7 @@
     "sign": "grafana-toolkit plugin:sign",
     "start": "yarn watch"
   },
-  "author": "Svet Bajlekov",
+  "author": "Svet Bajlekov / AMMP Technologies",
   "license": "Apache-2.0",
   "devDependencies": {
     "@grafana/data": "latest",
