@@ -26,5 +26,8 @@
   },
   "resolutions": {
     "rxjs": "6.6.3"
+  },
+  "dependencies": {
+    "mqtt": "^4.2.6"
   }
 }
