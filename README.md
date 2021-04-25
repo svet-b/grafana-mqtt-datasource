@@ -43,5 +43,7 @@ Grafana supports a wide range of data sources, including Prometheus, MySQL, and 
 
 ## To Do
 
+- When topic is changed, re-subscribe to new topic (currently the user needs to save and refresh the dashboard)
 - Move plotted values to the left (i.e. move time axis) even while no new data is being received.
 - Detect and report connection errors (e.g. at time of initial datasource setup). This is non-trivial due to https://github.com/mqttjs/MQTT.js/issues/876 and the fact that MqttClient.stream is not exposed in TypeScript
+- Support for multiple data series

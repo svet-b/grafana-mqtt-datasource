@@ -1,9 +1,7 @@
 import React, { ChangeEvent, PureComponent } from 'react';
-import { LegacyForms } from '@grafana/ui';
+import { InlineFieldRow, InlineField, Input } from '@grafana/ui';
 import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
 import { MyDataSourceOptions } from './types';
-
-const { FormField } = LegacyForms;
 
 interface Props extends DataSourcePluginOptionsEditorProps<MyDataSourceOptions> {}
 
@@ -24,16 +22,13 @@ export class ConfigEditor extends PureComponent<Props, State> {
     const { jsonData } = options;
 
     return (
-      <div className="gf-form-group">
-        <div className="gf-form">
-          <FormField
-            label="Base URL"
-            onChange={this.onBaseURLChange}
-            value={jsonData.baseUrl || ''}
-            placeholder="Base URL for MQTT WS server"
-          />
-        </div>
-      </div>
+      <>
+        <InlineFieldRow>
+          <InlineField labelWidth={20} label="WebSocket URL" tooltip="Base URL for MQTT WebSocket server">
+            <Input value={jsonData.baseUrl || ''} placeholder="ws://localhost:9001/" onChange={this.onBaseURLChange} />
+          </InlineField>
+        </InlineFieldRow>
+      </>
     );
   }
 }

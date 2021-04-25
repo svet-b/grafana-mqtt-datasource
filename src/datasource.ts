@@ -20,42 +20,17 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
 
   constructor(instanceSettings: DataSourceInstanceSettings<MyDataSourceOptions>) {
     super(instanceSettings);
-    this.baseUrl = instanceSettings.jsonData.baseUrl || 'ws://localhost:9001';
+    this.baseUrl = instanceSettings.jsonData.baseUrl || 'ws://localhost:9001/';
     this.mqttClient = connect(this.baseUrl);
-    // Track pool of websockets
-    // this.wsList = {};
-
-    // const onConnectFunction = (client: MqttClient, topic: string) => {
-    //   console.log('client connected:');
-    //   client.subscribe(topic, { qos: 0 });
-    //   client.publish('topic', 'wss secure connection demo...!', { qos: 0, retain: false });
-    // };
-    // this.mqttClient.on('connect', onConnectFunction);
-
-    // this.mqttClient.on('message', function (topic, message, packet) {
-    //   console.log('Received Message:= ' + message.toString() + '\nOn topic:= ' + topic);
-    // });
   }
 
   query(options: DataQueryRequest<MyQuery>): Observable<DataQueryResponse> {
     const streams = options.targets.map((target) => {
       const query = defaults(target, defaultQuery);
-
-      // const onConnectFunction = (client: MqttClient, topic: string) => {
-      //   console.log('client connected:');
-      //   client.subscribe(topic, { qos: 0 });
-      //   // client.publish('topic', 'wss secure connection demo...!', { qos: 0, retain: false });
-      // };
-
-      // const onMessageFunction = (topic: string, message: string) => {
-      //   console.log('Received Message:= ' + message.toString() + '\nOn topic:= ' + topic);
-      // };
-
-      // this.mqttClient.on('connect', () => onConnectFunction(this.mqttClient, query.topic));
       this.mqttClient.on('connect', () => {
-        console.info(`Successfully connected to ${this.baseUrl}`);
+        console.log(`Successfully connected to ${this.baseUrl}`);
         this.mqttClient.subscribe(query.topic);
-        console.info(`Successfully subscribed to ${query.topic}`);
+        console.log(`Successfully subscribed to ${query.topic}`);
       });
 
       return new Observable<DataQueryResponse>((subscriber) => {
@@ -68,21 +43,11 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
         frame.addField({ name: 'time', type: FieldType.time });
         frame.addField({ name: 'value', type: FieldType.number });
 
-        // const intervalId = setInterval(() => {
-        //   frame.add({ time: Date.now(), value: Math.random() });
-
-        //   subscriber.next({
-        //     data: [frame],
-        //     key: query.refId,
-        //     state: LoadingState.Streaming,
-        //   });
-        // }, 500);
-
         this.mqttClient.on('message', function (topic, message) {
           // message is Buffer
           const msg = message.toString();
           const value = parseFloat(msg);
-          console.log(`Received message ${message.toString()} on topic ${topic}`);
+          console.log(`Received message ${msg} on topic ${topic}`);
           frame.add({ time: Date.now(), value: value });
           subscriber.next({
             data: [frame],
