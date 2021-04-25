@@ -11,9 +11,9 @@ const { FormField } = LegacyForms;
 type Props = QueryEditorProps<DataSource, MyQuery, MyDataSourceOptions>;
 
 export class QueryEditor extends PureComponent<Props> {
-  onQueryTextChange = (event: ChangeEvent<HTMLInputElement>) => {
+  onTopicChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { onChange, query } = this.props;
-    onChange({ ...query, queryText: event.target.value });
+    onChange({ ...query, topic: event.target.value });
   };
 
   onConstantChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -23,16 +23,9 @@ export class QueryEditor extends PureComponent<Props> {
     onRunQuery();
   };
 
-  onFrequencyChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { onChange, query, onRunQuery } = this.props;
-    onChange({ ...query, frequency: parseFloat(event.target.value) });
-    // executes the query
-    onRunQuery();
-  };
-
   render() {
     const query = defaults(this.props.query, defaultQuery);
-    const { queryText, constant, frequency } = query;
+    const { topic, constant } = query;
 
     return (
       <div className="gf-form">
@@ -44,13 +37,12 @@ export class QueryEditor extends PureComponent<Props> {
           type="number"
           step="0.1"
         />
-        <FormField width={4} value={frequency} onChange={this.onFrequencyChange} label="Frequency" type="number" />
         <FormField
           labelWidth={8}
-          value={queryText || ''}
-          onChange={this.onQueryTextChange}
-          label="Query Text"
-          tooltip="Not used yet"
+          value={topic || ''}
+          onChange={this.onTopicChange}
+          label="Topic"
+          tooltip="MQTT topic to subscribe to"
         />
       </div>
     );

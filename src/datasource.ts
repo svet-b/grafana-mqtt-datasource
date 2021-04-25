@@ -14,11 +14,13 @@ import {
 import { MyQuery, MyDataSourceOptions, defaultQuery } from './types';
 
 export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
-  resolution: number;
+  baseUrl: string;
 
   constructor(instanceSettings: DataSourceInstanceSettings<MyDataSourceOptions>) {
     super(instanceSettings);
-    this.resolution = instanceSettings.jsonData.resolution || 1000.0;
+    this.baseUrl = instanceSettings.jsonData.baseUrl || 'ws://localhost:9001';
+    // Track pool of websockets
+    // this.wsList = {};
   }
 
   query(options: DataQueryRequest<MyQuery>): Observable<DataQueryResponse> {
