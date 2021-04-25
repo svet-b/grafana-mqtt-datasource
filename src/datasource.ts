@@ -1,12 +1,14 @@
 import defaults from 'lodash/defaults';
+import { Observable, merge } from 'rxjs';
 
 import {
   DataQueryRequest,
   DataQueryResponse,
   DataSourceApi,
   DataSourceInstanceSettings,
-  MutableDataFrame,
+  CircularDataFrame,
   FieldType,
+  LoadingState,
 } from '@grafana/data';
 
 import { MyQuery, MyDataSourceOptions, defaultQuery } from './types';
@@ -19,41 +21,37 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     this.resolution = instanceSettings.jsonData.resolution || 1000.0;
   }
 
-  async query(options: DataQueryRequest<MyQuery>): Promise<DataQueryResponse> {
-    const { range } = options;
-    const from = range!.from.valueOf();
-    const to = range!.to.valueOf();
-
-    // Return a constant for each query.
-    const data = options.targets.map(target => {
-      // const query = defaults(target, defaultQuery);
-      // return new MutableDataFrame({
-      //   refId: query.refId,
-      //   fields: [
-      //     { name: 'Time', values: [from, to], type: FieldType.time },
-      //     { name: 'Value', values: [query.constant, query.constant], type: FieldType.number },
-      //   ],
-      // });
+  query(options: DataQueryRequest<MyQuery>): Observable<DataQueryResponse> {
+    const streams = options.targets.map((target) => {
       const query = defaults(target, defaultQuery);
-      const frame = new MutableDataFrame({
-        refId: query.refId,
-        fields: [
-          { name: 'time', type: FieldType.time },
-          { name: 'value', type: FieldType.number },
-        ],
-      });
-      // duration of the time range, in milliseconds.
-      const duration = to - from;
 
-      // step determines how close in time (ms) the points will be to each other.
-      const step = duration / this.resolution;
-      for (let t = 0; t < duration; t += step) {
-        frame.add({ time: from + t, value: Math.sin((2 * Math.PI * query.frequency * t) / duration) });
-      }
-      return frame;
+      return new Observable<DataQueryResponse>((subscriber) => {
+        const frame = new CircularDataFrame({
+          append: 'tail',
+          capacity: 1000,
+        });
+
+        frame.refId = query.refId;
+        frame.addField({ name: 'time', type: FieldType.time });
+        frame.addField({ name: 'value', type: FieldType.number });
+
+        const intervalId = setInterval(() => {
+          frame.add({ time: Date.now(), value: Math.random() });
+
+          subscriber.next({
+            data: [frame],
+            key: query.refId,
+            state: LoadingState.Streaming,
+          });
+        }, 500);
+
+        return () => {
+          clearInterval(intervalId);
+        };
+      });
     });
 
-    return { data };
+    return merge(...streams);
   }
 
   async testDatasource() {

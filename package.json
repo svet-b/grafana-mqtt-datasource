@@ -14,13 +14,17 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@grafana/data": "latest",
+    "@grafana/runtime": "latest",
     "@grafana/toolkit": "latest",
     "@grafana/ui": "latest",
-    "@types/lodash": "latest",
     "@testing-library/jest-dom": "5.4.0",
-    "@testing-library/react": "^10.0.2"
+    "@testing-library/react": "^10.0.2",
+    "@types/lodash": "latest"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=12 <15"
+  },
+  "resolutions": {
+    "rxjs": "6.6.3"
   }
 }

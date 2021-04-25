@@ -4,6 +4,7 @@
   "name": "mqtt-datasource",
   "id": "ammpio-mqtt-datasource",
   "metrics": true,
+  "streaming": true,
   "info": {
     "description": "MQTT Datasource",
     "author": {
