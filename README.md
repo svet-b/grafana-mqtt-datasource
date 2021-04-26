@@ -37,7 +37,7 @@ docker run -d \
 
 You can also download and install the plugin from the URL above, or by cloning this repo directly.
 
-If going the Docker route, navigate to http://localhost:3000 in your web browser. Add the MQTT datasource via the usual Configuration > Data Sources > Add Data Source path. The only option to set is the WebSocket URL. For a broker running locally (see below) this could be ws://localhost:9001/.
+Assuming you've gone down the Docker route, navigate to http://localhost:3000 in your web browser. Add the MQTT datasource via the usual Configuration > Data Sources > Add Data Source path. The only option to set is the WebSocket URL. For a broker running locally (see below) this could be ws://localhost:9001/.
 
 You can use the data source in any panel type. The only option to set is the topic on which to subscribe. Note that currently, after setting (or updating) the topic, you will need to save and reload the dashboard in order for the change to be picked up.
 
@@ -45,7 +45,7 @@ As soon as any data is received on the topic, the value will be visualized. In t
 
 ## Simple demonstration
 
-Here we set up a local broker, from which we want to visualize data. The data we will publish is the ping time from our client to a host (e.g. www.grafana.com).
+Here we set up a local broker, and we publish data to it, in a way that can be visualized in Grafana using the plugin. The data we will publish is the ping time from our host to the www.grafana.com server.
 
 ### Set up local Mosquitto broker with WebSockets
 
@@ -64,14 +64,14 @@ Spin up a Mosquitto broker in Docker using the above configuration:
 
 ```
 docker run -d \
-  -p 1883:1883 \
-  -p 9001:9001 \
-  --name=mosquitto \
-  -v (pwd)/mosquitto.conf:/mosquitto/config/mosquitto.conf \
-  eclipse-mosquitto
+   -p 1883:1883 \
+   -p 9001:9001 \
+   --name=mosquitto \
+   -v $(pwd)/mosquitto.conf:/mosquitto/config/mosquitto.conf \
+   eclipse-mosquitto
 ```
 
-This will run on ws://localhost:9001 (WebSocket protocol) and mqtt://localhost:1883 (MQTT protocol), and not require authentication.
+This will run on ws://localhost:9001 (WebSocket protocol) and mqtt://localhost:1883 (MQTT protocol), and does not require authentication.
 
 ### Publish the ping delay for a host to the MQTT broker
 
@@ -87,6 +87,7 @@ Create script `ping_to_mqtt.py`:
 
 ```
 # pip_to_mqtt.py
+
 import paho.mqtt.client as mqtt
 from time import sleep
 from ping3 import ping
@@ -120,4 +121,4 @@ Run script:
 python3 ping_to_mqtt.py
 ```
 
-(stop with Ctrl-C/Cmd-C)
+(stop with Ctrl-C/Cmd-C). You can see the script running in the screencast above.
