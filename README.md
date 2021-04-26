@@ -2,7 +2,9 @@
 
 Inspired by the superb [Redis streaming data source](https://github.com/RedisGrafana/grafana-redis-datasource), I thought it would be cool to be able to visualize MQTT data in real-time. What's more, since MQTT is a native "streaming" protocol - with data being pushed to subscribers as soon as it's published - it made even more sense to pair an MQTT data source with Grafana's new streaming visualization capabilities.
 
-So far the functionality leve is "proof-of-concept". The client can subscribe to a single topic over an unauthenticated WebSocket connection, and expects to receive numerical values published as strings on that topic.
+https://user-images.githubusercontent.com/12831860/116016275-2379ca00-a60a-11eb-816e-6e1590103999.mov
+
+So far the functionality level is "proof-of-concept". The client can subscribe to a single topic over an unauthenticated WebSocket connection, and expects to receive numerical values published as strings on that topic.
 
 In fact shortly after creating this I came across https://github.com/diebietse/grafana-mqtt, which is pretty similar.
 
