@@ -4,7 +4,7 @@ Inspired by the superb [Redis streaming data source](https://github.com/RedisGra
 
 https://user-images.githubusercontent.com/12831860/116016275-2379ca00-a60a-11eb-816e-6e1590103999.mov
 
-So far the functionality level is "proof-of-concept". The client can subscribe to a single topic over an unauthenticated WebSocket connection, and expects to receive numerical values published as strings on that topic.
+So far the functionality level is "proof-of-concept". The client can subscribe to a single topic over an unauthenticated WebSockets connection, and expects to receive numerical values published as strings on that topic.
 
 In fact shortly after creating this I came across https://github.com/diebietse/grafana-mqtt, which is pretty similar.
 
@@ -13,13 +13,13 @@ In fact shortly after creating this I came across https://github.com/diebietse/g
 The near-term plan is to address the following issues:
 
 - When topic is changed, re-subscribe to new topic immediately. Currently the user needs to save and refresh the dashboard.
-- Enable parsing of other payload formats: JSON (via JSONata), CBOR, etc)
-- Enable authentication (though probably without a backend plugin component, at least for the time being)
+- Enable parsing of other payload formats: JSON (via JSONata), CBOR, etc
+- Enable passing of credentials for authentication (though probably without a backend plugin component, at least for the time being)
 
 Some other enhancements:
 
-- Move plotted values to the left (i.e. move time axis) even while no new data is being received
-- Enable a dedicated timestamp field (rather than assume time = now)
+- Continuously move plotted values to the left (i.e. update time axis) even if new data is being received
+- Enable a dedicated timestamp field (rather than assume time = now for all payloads)
 - Support for multiple data series
 - Detect and report connection errors (e.g. at time of initial datasource setup). This is non-trivial due to https://github.com/mqttjs/MQTT.js/issues/876 and the fact that `MqttClient.stream` is not exposed in TypeScript
 
