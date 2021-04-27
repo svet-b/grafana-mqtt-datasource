@@ -15,20 +15,26 @@ import { MyQuery, MyDataSourceOptions, defaultQuery } from './types';
 import { connect, MqttClient } from 'mqtt';
 
 export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
-  baseUrl: string;
+  url: string;
+  mqttOptions: any;
   mqttClient: MqttClient;
 
   constructor(instanceSettings: DataSourceInstanceSettings<MyDataSourceOptions>) {
     super(instanceSettings);
-    this.baseUrl = instanceSettings.jsonData.baseUrl || 'ws://localhost:9001/';
-    this.mqttClient = connect(this.baseUrl);
+    this.url = instanceSettings.jsonData.url || 'ws://localhost:9001/';
+    this.mqttOptions = {
+      username: instanceSettings.jsonData.username,
+      password: instanceSettings.jsonData.password,
+      clientId: instanceSettings.jsonData.clientId,
+    };
+    this.mqttClient = connect(this.url, this.mqttOptions);
   }
 
   query(options: DataQueryRequest<MyQuery>): Observable<DataQueryResponse> {
     const streams = options.targets.map((target) => {
       const query = defaults(target, defaultQuery);
       this.mqttClient.on('connect', () => {
-        console.log(`Successfully connected to ${this.baseUrl}`);
+        console.log(`Successfully connected to ${this.url}`);
         this.mqttClient.subscribe(query.topic);
         console.log(`Successfully subscribed to ${query.topic}`);
       });
@@ -64,9 +70,9 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   }
 
   async testDatasource(): Promise<any> {
-    let baseUrl = this.baseUrl;
+    let mqttClient = this.mqttClient;
     let promise = new Promise(function (resolve, reject) {
-      let mqttClient = connect(baseUrl);
+      mqttClient.reconnect();
       // This doesn't actually work; see e.g. https://github.com/mqttjs/MQTT.js/issues/876
       mqttClient.on('error', function (event) {
         reject({
