@@ -4,7 +4,7 @@ Inspired by the superb [Redis streaming data source](https://github.com/RedisGra
 
 https://user-images.githubusercontent.com/12831860/116016275-2379ca00-a60a-11eb-816e-6e1590103999.mov
 
-So far the functionality level is "proof-of-concept". The client can subscribe to a single topic over an unauthenticated WebSockets connection, and expects to receive numerical values published as strings on that topic.
+So far the functionality level is "proof-of-concept". The client can subscribe to a single topic over an optionally authenticated WebSockets connection, and expects to receive numerical values published as strings on that topic.
 
 In fact shortly after creating this I came across https://github.com/diebietse/grafana-mqtt, which is pretty similar.
 
@@ -14,7 +14,6 @@ The near-term plan is to address the following issues:
 
 - When topic is changed, re-subscribe to new topic immediately. Currently the user needs to save and refresh the dashboard.
 - Enable parsing of other payload formats: JSON (via JSONata), CBOR, etc
-- Enable passing of credentials for authentication (though probably without a backend plugin component, at least for the time being)
 
 Some other enhancements:
 
