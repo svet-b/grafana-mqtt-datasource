@@ -18,6 +18,7 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   url: string;
   mqttOptions: any;
   mqttClient: MqttClient;
+  activeSubs: string;
 
   constructor(instanceSettings: DataSourceInstanceSettings<MyDataSourceOptions>) {
     super(instanceSettings);
@@ -28,6 +29,7 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       clientId: instanceSettings.jsonData.clientId,
     };
     this.mqttClient = connect(this.url, this.mqttOptions);
+    this.activeSubs = '';
   }
 
   query(options: DataQueryRequest<MyQuery>): Observable<DataQueryResponse> {
@@ -35,9 +37,14 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       const query = defaults(target, defaultQuery);
       this.mqttClient.on('connect', () => {
         console.log(`Successfully connected to ${this.url}`);
-        this.mqttClient.subscribe(query.topic);
-        console.log(`Successfully subscribed to ${query.topic}`);
       });
+
+      if (this.activeSubs !== query.topic) {
+        this.mqttClient.unsubscribe(this.activeSubs);
+        this.mqttClient.subscribe(query.topic);
+        this.activeSubs = query.topic;
+        console.log(`Subscribed to ${query.topic}`);
+      }
 
       return new Observable<DataQueryResponse>((subscriber) => {
         const frame = new CircularDataFrame({
