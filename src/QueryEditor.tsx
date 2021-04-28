@@ -32,12 +32,14 @@ export class QueryEditor extends PureComponent<Props> {
           <InlineField
             labelWidth={20}
             label="Topic"
-            tooltip="MQTT topic to subscribe to. NOTE: As of now, updating this requires you to save and reload the dashboard)"
+            tooltip="MQTT topic to subscribe to. Wildcards are allowed (though payloads on all topics will appear as one series. Please click <Subscribe> to apply any changes."
           >
-            <Input value={topic || ''} width={100} onChange={this.onTopicChange} />
+            <Input value={topic || ''} width={80} onChange={this.onTopicChange} />
           </InlineField>
+          <Button size={'md'} onClick={onRunQuery}>
+            Subscribe
+          </Button>
         </InlineFieldRow>
-        <Button onClick={onRunQuery}>Run</Button>
       </>
     );
   }
