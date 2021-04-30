@@ -1,4 +1,6 @@
 import defaults from 'lodash/defaults';
+import _ from 'lodash';
+
 import { Observable, merge } from 'rxjs';
 
 import {
@@ -13,6 +15,7 @@ import {
 
 import { MyQuery, MyDataSourceOptions, defaultQuery } from './types';
 import { connect, MqttClient } from 'mqtt';
+import { DataTypeValue, ValueEncodingValue } from './constants';
 
 export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   url: string;
@@ -58,9 +61,8 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
 
         this.mqttClient.on('message', function (topic, message) {
           // message is Buffer
-          const msg = message.toString();
-          const value = parseFloat(msg);
-          console.log(`Received message ${msg} on topic ${topic}`);
+          console.log(`Received message ${message.toString()} on topic ${topic}`);
+          let value = parseMessageValue(message, query);
           frame.add({ time: Date.now(), value: value });
           subscriber.next({
             data: [frame],
@@ -104,4 +106,37 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     );
     return promise;
   }
+}
+
+function parseMessageValue(message: Buffer, query: MyQuery): number | null {
+  function toArrayBuffer(buf: Buffer): ArrayBuffer {
+    let ab = new ArrayBuffer(buf.length);
+    let view = new Uint8Array(ab);
+    for (var i = 0; i < buf.length; ++i) {
+      view[i] = buf[i];
+    }
+    return ab;
+  }
+
+  if (query.dataType === DataTypeValue.JSON) {
+    const parsedMessage = JSON.parse(message.toString());
+    return _.get(parsedMessage, query.dataPath);
+  } else if (query.dataType === DataTypeValue.BYTES) {
+    if (query.valueEncoding === ValueEncodingValue.STRING) {
+      return parseFloat(message.toString());
+    } else {
+      let view = new DataView(toArrayBuffer(message));
+      switch (query.valueEncoding) {
+        case ValueEncodingValue.FLOAT32:
+          return view.getFloat32(0, false);
+        case ValueEncodingValue.FLOAT64:
+          return view.getFloat64(0, false);
+        case ValueEncodingValue.INT16:
+          return view.getInt16(0, false);
+        case ValueEncodingValue.INT32:
+          return view.getInt32(0, false);
+      }
+    }
+  }
+  return null;
 }

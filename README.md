@@ -4,17 +4,15 @@ Inspired by the superb [Redis streaming data source](https://github.com/RedisGra
 
 https://user-images.githubusercontent.com/12831860/116016275-2379ca00-a60a-11eb-816e-6e1590103999.mov
 
-So far the functionality level is "proof-of-concept". The client can subscribe to a single topic over an optionally authenticated WebSockets connection, and expects to receive numerical values published as strings on that topic.
+The client can subscribe to a single topic over an optionally authenticated WebSockets connection. It expects to receive values that have been encoded in one of the following ways into MQTT payloads:
+- JSON storage (with support for traversal to a specific path)
+- Number stored as binary: either in UTF-8 encoded string, IEEE-754 float, or integer
 
-In fact shortly after creating this I came across https://github.com/diebietse/grafana-mqtt, which is pretty similar.
+Shortly after creating this I came across https://github.com/diebietse/grafana-mqtt, which for a start was pretty similar, though currently this implementation is more full-featured.
 
 ## To do
 
-The near-term plan is to address the following issues:
-
-- Enable parsing of other payload formats: JSON (via JSONata), CBOR, etc
-
-Some other enhancements:
+Some planned enhancements:
 
 - Continuously move plotted values to the left (i.e. update time axis) even if new data is being received
 - Enable a dedicated timestamp field (rather than assume time = now for all payloads)

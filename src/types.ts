@@ -1,11 +1,18 @@
 import { DataQuery, DataSourceJsonData } from '@grafana/data';
+import { DataTypeValue, ValueEncodingValue } from './constants';
 
 export interface MyQuery extends DataQuery {
   topic: string;
+  dataType: DataTypeValue;
+  dataPath: string;
+  valueEncoding: ValueEncodingValue;
 }
 
 export const defaultQuery: Partial<MyQuery> = {
   topic: '',
+  dataType: DataTypeValue.BYTES,
+  dataPath: '',
+  valueEncoding: ValueEncodingValue.STRING,
 };
 
 /**
