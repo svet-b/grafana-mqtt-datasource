@@ -57,7 +57,7 @@ export class QueryEditor extends PureComponent<Props> {
           </Button>
         </InlineFieldRow>
         <InlineFieldRow>
-          <InlineField labelWidth={20} label="Data type">
+          <InlineField labelWidth={20} label="Payload type">
             <Select options={DataType} value={dataType} width={40} onChange={this.onDataTypeChange} />
           </InlineField>
         </InlineFieldRow>
