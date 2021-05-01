@@ -1,6 +1,6 @@
 {
   "name": "grafana-mqtt-streaming-datasource",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "MQTT Datasource",
   "scripts": {
     "build": "grafana-toolkit plugin:build",
