@@ -18,11 +18,11 @@ export enum DataTypeValue {
  */
 export const DataType: Array<SelectableValue<DataTypeValue>> = [
   {
-    label: 'JSON (UTF-8 encoded)',
+    label: 'JSON',
     value: DataTypeValue.JSON,
   },
   {
-    label: 'Raw bytes',
+    label: 'Raw value',
     value: DataTypeValue.BYTES,
   },
 ];
@@ -44,7 +44,7 @@ export enum ValueEncodingValue {
  */
 export const ValueEncoding: Array<SelectableValue<ValueEncodingValue>> = [
   {
-    label: 'UTF-8 encoded string',
+    label: 'Number as string (UTF-8 encoded)',
     value: ValueEncodingValue.STRING,
   },
   {
