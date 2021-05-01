@@ -62,7 +62,13 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
         this.mqttClient.on('message', function (topic, message) {
           // message is Buffer
           console.log(`Received message ${message.toString()} on topic ${topic}`);
-          let value = parseMessageValue(message, query);
+          let value = null;
+          try {
+            value = parseMessageValue(message, query);
+          } catch (e) {
+            console.error(`Error parsing message: ${e}`);
+            value = null;
+          }
           frame.add({ time: Date.now(), value: value });
           subscriber.next({
             data: [frame],
