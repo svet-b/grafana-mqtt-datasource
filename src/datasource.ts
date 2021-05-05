@@ -1,7 +1,7 @@
 import defaults from 'lodash/defaults';
 import _ from 'lodash';
 
-import { Observable, merge } from 'rxjs';
+import { Observable, Subscriber, merge } from 'rxjs';
 
 import {
   DataQueryRequest,
@@ -38,6 +38,12 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   query(options: DataQueryRequest<MyQuery>): Observable<DataQueryResponse> {
     const streams = options.targets.map((target) => {
       const query = defaults(target, defaultQuery);
+      if (!this.mqttClient.connected) {
+        // This is not a frivolous reconnect - it's necessary to reinitialize
+        // the client if a Subscription tear-down event has previously occurred
+        this.mqttClient.reconnect();
+      }
+
       this.mqttClient.on('connect', () => {
         console.log(`Successfully connected to ${this.url}`);
       });
@@ -50,6 +56,10 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       }
 
       return new Observable<DataQueryResponse>((subscriber) => {
+        subscriber.add(() => {
+          this.disconnect(query, subscriber);
+        });
+
         const frame = new CircularDataFrame({
           append: 'tail',
           capacity: 1000,
@@ -82,6 +92,11 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     });
 
     return merge(...streams);
+  }
+
+  private disconnect(query: MyQuery, subscriber: Subscriber<DataQueryResponse>) {
+    console.log(`Closing MQTT connection to ${this.url}`);
+    this.mqttClient.end();
   }
 
   async testDatasource(): Promise<any> {
